@@ -2,13 +2,17 @@ package com.example.bottomnavigation;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.bottomnavigation.Fragment.History;
+import com.example.bottomnavigation.Fragment.Home;
+import com.example.bottomnavigation.Fragment.Profile;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity{
 
     BottomNavigationView bottomNavigationView;
 
@@ -18,32 +22,34 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setContentView(R.layout.activity_main);
 
          bottomNavigationView = findViewById(R.id.bottomNavigationView);
-         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-         bottomNavigationView.setSelectedItemId(R.id.home);
+            bottomNavigationView.setOnItemSelectedListener(navListener);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, new Home())
+                .commit();
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int itemId = item.getItemId();
-        if (itemId == R.id.home) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.flFragment, new Home())
-                    .commit();
-            return true;
-        } else if (itemId == R.id.history) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.flFragment, new History())
-                    .commit();
-            return true;
-        } else if (itemId == R.id.profile) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.flFragment, new Profile())
-                    .commit();
-            return true;
-        }
-        return false;
-    }
+    private BottomNavigationView.OnItemSelectedListener navListener =
+            new BottomNavigationView.OnItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    Fragment selectedFragment = null;
+
+                    if (item.getItemId() == R.id.home) {
+                        selectedFragment = new Home();
+                    } else if (item.getItemId() == R.id.history) {
+                        selectedFragment = new History();
+                    } else if (item.getItemId() == R.id.profile) {
+                        selectedFragment = new Profile();
+                    }
+
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.container, selectedFragment)
+                            .commit();
+
+                    return true;
+                }
+            };
+
+
 }
